@@ -1,6 +1,14 @@
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -18,7 +26,6 @@ public class Server extends JFrame implements ActionListener{
 	private JButton sv_start = new JButton("서버 실행");
 	private JButton sv_end = new JButton("서버 종료");
 	private JLabel label = new JLabel("포트 번호");
-
 	
 	Server(){
 		dp(); // 화면
@@ -63,7 +70,7 @@ public class Server extends JFrame implements ActionListener{
 	public static void main(String[] args) {
 		
 		new Server();
-
+		
 	}
 
 	@Override
