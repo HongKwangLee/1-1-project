@@ -96,19 +96,19 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 						String pt = st.nextToken();
 						String Msg = st.nextToken();
 						
-						if(pt.equals("NewUser")){
+						if(pt.equals("NewUser")){ // 새로들어온 유저
 							user_list.add(Msg);
 							textArea.append(Msg+"님이 입장하셨습니다.\n");
-						}else if(pt.equals("OldUser")){
+						}else if(pt.equals("OldUser")){ //이미 접속중인 유저
 							user_list.add(Msg);
-						}else if(pt.equals("Whisper")){
+						}else if(pt.equals("Whisper")){ // 귓속말
 							textArea.append(Msg+"\n");
 							scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
-						}else if(pt.equals("UserOut")){
+						}else if(pt.equals("UserOut")){ // 유저 나감
 							user_list.remove(Msg);
-						}else if(pt.equals("setListData")){
+						}else if(pt.equals("setListData")){ // 유저 리스트 업뎃
 							list.setListData(user_list);
-						}else{
+						}else{ // 채팅
 							textArea.append(pt+":"+Msg+"\n");
 							scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
 						}
