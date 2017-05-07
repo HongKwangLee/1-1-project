@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -70,6 +71,8 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 	}
 	
 	public void access(){
+		dp2(); //채팅창 화면 // textArea.setEditable(false); 안되길래 였다 쳐넣음
+		textArea.append("-귓속말-\n/ㄱ <닉네임> <내용>\n/귓 <닉네임> <내용>\n/귓속말 <닉네임> <내용>\n-단축기-\n귓속말(유저리스트에서 선택후) = ctrl+w\n※귓속말 받았을시 자동 선택\n");
 		try {		
 			is = sc.getInputStream();
 			os = sc.getOutputStream();
@@ -99,17 +102,20 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 						if(pt.equals("NewUser")){ // 새로들어온 유저
 							user_list.add(Msg);
 							textArea.append(Msg+"님이 입장하셨습니다.\n");
-						}else if(pt.equals("OldUser")){ //이미 접속중인 유저
+						}else if(pt.equals("OldUser")){ // 이미접속중인 유저
 							user_list.add(Msg);
 						}else if(pt.equals("Whisper")){ // 귓속말
+							st = new StringTokenizer(Msg, ":");
+							String name = st.nextToken().trim();
 							textArea.append(Msg+"\n");
 							scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
+							list.setSelectedValue(name, true);
 						}else if(pt.equals("UserOut")){ // 유저 나감
 							user_list.remove(Msg);
-						}else if(pt.equals("setListData")){ // 유저 리스트 업뎃
+						}else if(pt.equals("setListData")){ // 유저리스트 업뎃
 							list.setListData(user_list);
-						}else{ // 채팅
-							textArea.append(pt+":"+Msg+"\n");
+						}else{ // 기본 채팅
+							textArea.append(pt+" : "+Msg+"\n");
 							scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
 						}
 						
@@ -121,6 +127,9 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 							dos.close();
 							sc.close();
 							JOptionPane.showMessageDialog(null, "서버 연결 에러", "알림", JOptionPane.ERROR_MESSAGE);
+							textArea.setText(null);
+							user_list.removeAllElements();
+							dp();
 						} catch (IOException e1) {
 							e1.printStackTrace();
 						}
@@ -139,7 +148,7 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 		try {
 			dos.writeUTF(msg);
 		} catch (IOException e) {
-			e.printStackTrace(); // 메세지 보넬때 오류 = 스트림 오류 알빠아님(맞나?)
+			e.printStackTrace();
 		}
 	}
 	
@@ -252,7 +261,6 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 				port = Integer.parseInt(tf_port.getText().trim());
 				nickname = tf_nickname.getText().trim();			
 				Start();
-				dp2(); //채팅창 화면 // textArea.setEditable(false); 안되길래 였다 쳐넣음
 				
 			}
 		}
@@ -271,13 +279,16 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 	// 키입력
 	@Override
 	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
+		if ((e.getKeyCode() == KeyEvent.VK_W) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)){
+			String selectuser = (String)list.getSelectedValue();
+			if(selectuser != null){
+				textField.setText("/ㄱ "+selectuser+" ");
+			}
+		}
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
 		if(e.getKeyCode() == 10){
 			//System.out.println("엔터키");
 			if(!textField.getText().equals("")){
@@ -291,7 +302,6 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 	

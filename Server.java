@@ -16,6 +16,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
@@ -25,6 +26,7 @@ public class Server extends JFrame implements ActionListener{
 	private JPanel contentPane;
 	private JTextField tf_Port;
 	private JTextArea textArea = new JTextArea();
+	private JScrollPane scrollPane = new JScrollPane(textArea);
 	private JButton sv_start = new JButton("서버 실행");
 	private JButton sv_end = new JButton("서버 종료");
 	private JLabel label = new JLabel("포트 번호");
@@ -56,6 +58,7 @@ public class Server extends JFrame implements ActionListener{
 				while(true){
 					try {
 						textArea.append("사용자 접속 대기중...\n");
+						scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
 						sc = svsc.accept();
 						
 						UserInfo user = new UserInfo(sc);
@@ -97,6 +100,7 @@ public class Server extends JFrame implements ActionListener{
 				
 				Nickname = dis.readUTF();
 				textArea.append(Nickname+"님 접속\n");
+				scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
 				
 				BroadCast("NewUser/"+Nickname);
 				
@@ -132,10 +136,10 @@ public class Server extends JFrame implements ActionListener{
 						for(int i = 0;i< user.size();i++){
 							UserInfo User = (UserInfo)user.elementAt(i);
 							if(User.Nickname.equals(nname)){
-								User.SendMsg("Whisper/"+Nickname+":"+Msg);
+								User.SendMsg("Whisper/"+Nickname+" :"+Msg);
 							}
 						}
-						SendMsg("Whisper/"+nname+"님에게:"+Msg);
+						SendMsg("Whisper/"+nname+"님에게 :"+Msg);
 					}else{
 						BroadCast(Nickname+"/"+msg);
 					}
@@ -151,6 +155,7 @@ public class Server extends JFrame implements ActionListener{
 						e1.printStackTrace();
 					}
 					textArea.append(Nickname+"님 접속 종료\n");
+					scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
 					break;
 				}
 				
@@ -209,8 +214,8 @@ public class Server extends JFrame implements ActionListener{
 		contentPane.add(tf_Port);
 		tf_Port.setColumns(10);
 		
-		textArea.setBounds(12, 10, 370, 290);
-		contentPane.add(textArea);
+		scrollPane.setBounds(12, 10, 370, 290);
+		contentPane.add(scrollPane);
 		textArea.setEditable(false);
 		
 		this.setVisible(true);
