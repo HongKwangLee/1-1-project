@@ -107,7 +107,7 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 						}else if(pt.equals("Whisper")){ // 귓속말
 							st = new StringTokenizer(Msg, ":");
 							String name = st.nextToken().trim();
-							textArea.append(Msg+"\n");
+							textArea.append("("+Msg+")\n"); // 노란색으로 하고싶은데 색바꾸는법 아시는분
 							scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
 							list.setSelectedValue(name, true);
 						}else if(pt.equals("UserOut")){ // 유저 나감
