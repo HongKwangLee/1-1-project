@@ -99,7 +99,16 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 						String pt = st.nextToken();
 						String Msg = st.nextToken();
 						
-						if(pt.equals("NewUser")){ // 새로들어온 유저
+						if(pt.equals("error")){ // 새로들어온 유저
+							is.close();
+							os.close();
+							dis.close();
+							dos.close();
+							sc.close();
+							JOptionPane.showMessageDialog(null, "이미 접속중인 닉네임", "알림", JOptionPane.ERROR_MESSAGE);
+							textArea.setText(null);
+							dp();
+						}else if(pt.equals("NewUser")){ // 새로들어온 유저
 							user_list.add(Msg);
 							textArea.append(Msg+"님이 입장하셨습니다.\n");
 						}else if(pt.equals("OldUser")){ // 이미접속중인 유저

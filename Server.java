@@ -84,6 +84,7 @@ public class Server extends JFrame implements ActionListener{
 		
 		private Socket user_sc;
 		private String Nickname;
+		int a = 0;
 		
 		UserInfo(Socket soc){
 			this.user_sc = soc; // 유저 소켓
@@ -99,66 +100,79 @@ public class Server extends JFrame implements ActionListener{
 				dos = new DataOutputStream(os);
 				
 				Nickname = dis.readUTF();
-				textArea.append(Nickname+"님 접속\n");
-				scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
-				
-				BroadCast("NewUser/"+Nickname);
-				
 				for(int i = 0;i< user.size();i++){
 					UserInfo User = (UserInfo)user.elementAt(i);
-					SendMsg("OldUser/"+User.Nickname);
+					if(User.Nickname.equals(Nickname)){
+						SendMsg("error/"+Nickname);
+						dos.close();
+						dis.close();
+						user_sc.close();
+						a = 1;
+					}
 				}
-				
-				user.add(this);
-				
-				BroadCast("setListData/1");
-				
+				if(a != 1){
+					textArea.append(Nickname+"님 접속\n");
+					scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
+					
+					BroadCast("NewUser/"+Nickname);
+					
+					for(int i = 0;i< user.size();i++){
+						UserInfo User = (UserInfo)user.elementAt(i);
+						SendMsg("OldUser/"+User.Nickname);
+					}
+					
+					user.add(this);
+					
+					BroadCast("setListData/1");
+				}
 			} catch (IOException e) {
 				JOptionPane.showMessageDialog(null, "스티림 에러", "알림", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		
 		public void run(){
-			while(true){
-				try {
-					String msg = dis.readUTF();
-					
-					st = new StringTokenizer(msg, " ");
-					
-					String pt = st.nextToken();
-					
-					if(pt.equals("/ㄱ") || pt.equals("/귓속말") || pt.equals("/귓")){
-						String nname = st.nextToken();
-						String Msg = "";
-						while (st.hasMoreTokens()) {
-							Msg += " "+st.nextToken();
-						}
-						for(int i = 0;i< user.size();i++){
-							UserInfo User = (UserInfo)user.elementAt(i);
-							if(User.Nickname.equals(nname)){
-								User.SendMsg("Whisper/"+Nickname+" :"+Msg);
-							}
-						}
-						SendMsg("Whisper/"+nname+"님에게 :"+Msg);
-					}else{
-						BroadCast(Nickname+"/"+msg);
-					}
-				} catch (IOException e) {
+			if(a != 1){
+				while(true){
 					try {
-						dos.close();
-						dis.close();
-						user_sc.close();
-						user.remove(this);
-						BroadCast("UserOut/"+Nickname);
-						BroadCast("setListData/1");
-					} catch (IOException e1) {
-						e1.printStackTrace();
+						String msg = dis.readUTF();
+						
+						String[] sm = msg.split(" ");
+						
+						String pt = sm[0];
+						
+						if(pt.equals("/ㄱ") || pt.equals("/귓속말") || pt.equals("/귓")){
+							String nname = sm[1];
+							String Msg = "";
+							for (int i = 2; i< sm.length; i++) {
+								Msg += " "+sm[i];
+							}
+							for(int i = 0;i< user.size();i++){
+								UserInfo User = (UserInfo)user.elementAt(i);
+								if(User.Nickname.equals(nname)){
+									User.SendMsg("Whisper/"+Nickname+" :"+Msg);
+								}
+							}
+							SendMsg("Whisper/"+nname+"님에게 :"+Msg);
+						}else{
+							BroadCast(Nickname+"/"+msg);
+						}
+					} catch (IOException e) {
+						try {
+							dos.close();
+							dis.close();
+							user_sc.close();
+							user.remove(this);
+							BroadCast("UserOut/"+Nickname);
+							BroadCast("setListData/1");
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+						textArea.append(Nickname+"님 접속 종료\n");
+						scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
+						break;
 					}
-					textArea.append(Nickname+"님 접속 종료\n");
-					scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
-					break;
+					
 				}
-				
 			}
 		}
 		
