@@ -99,7 +99,7 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 						String pt = st.nextToken();
 						String Msg = st.nextToken();
 						
-						if(pt.equals("error")){ // 새로들어온 유저
+						if(pt.equals("error")){
 							is.close();
 							os.close();
 							dis.close();
